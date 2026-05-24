@@ -6,7 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Classroom extends Model
 {
-    protected $fillable = ['academic_year_id', 'grade_id', 'name', 'track', 'max_students'];
+    protected $fillable = [
+        'academic_year_id',
+        'grade_id',
+        'name',
+        'track',
+        'room',
+        'max_students',   // ← បន្ថែម room
+    ];
 
     public function academicYear()
     {
@@ -21,8 +28,8 @@ class Classroom extends Model
     public function students()
     {
         return $this->belongsToMany(Student::class, 'student_classroom')
-                    ->withPivot('status', 'enrolled_at')
-                    ->withTimestamps();
+            ->withPivot('status', 'enrolled_at')
+            ->withTimestamps();
     }
 
     public function homeroomTeacher()
