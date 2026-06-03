@@ -15,6 +15,7 @@ import StudentAttendancePage from "./pages/student/AttendancePage";
 import ReportCardPage from "./pages/student/ReportCardPage";
 import Login from "./pages/Login";
 import AssignmentPage from "./pages/admin/AssignmentPage";
+import StudentRegistrationPage from "./pages/admin/StudentRegistrationPage";
 export default function App() {
   return (
     <BrowserRouter>
@@ -37,6 +38,9 @@ export default function App() {
           <Route path="classrooms" element={<ClassroomPage />} />
           <Route path="teachers" element={<TeacherPage />} />
           <Route path="enrollment" element={<EnrollmentPage />} />
+          <Route path="assignments" element={<AssignmentPage />} />
+          <Route path="subjects" element={<SubjectPage />} />
+          <Route path="enrollment" element={<StudentRegistrationPage />} />
         </Route>
 
         {/* Teacher */}

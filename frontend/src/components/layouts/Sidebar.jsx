@@ -3,13 +3,13 @@ import useAuthStore from '../../store/authStore'
 import api from '../../lib/axios'
 
 const adminMenu = [
-  { path: '/admin/dashboard',      icon: 'dashboard',          label: 'ទំព័រដើម'       },
-  { path: '/admin/academic-years', icon: 'event_note',         label: 'ឆ្នាំសិក្សា'     },
-  { path: '/admin/classrooms',     icon: 'meeting_room',       label: 'ថ្នាក់រៀន'        },
-  { path: '/admin/subjects',       icon: 'menu_book',          label: 'មុខវិជ្ជា'        },
-  { path: '/admin/teachers',       icon: 'supervisor_account', label: 'គ្រូបង្រៀន'       },
-  { path: '/admin/assignments',    icon: 'assignment_ind',     label: 'ចាត់តាំងគ្រូ'     },
-  { path: '/admin/enrollment',     icon: 'how_to_reg',         label: 'ចុះឈ្មោះសិស្ស'   },
+  { path: '/admin/dashboard',      icon: 'dashboard',          label: 'ទំព័រដើម'         },
+  { path: '/admin/academic-years', icon: 'event_note',         label: 'ឆ្នាំសិក្សា'       },
+  { path: '/admin/classrooms',     icon: 'meeting_room',       label: 'ថ្នាក់រៀន'          },
+  { path: '/admin/subjects',       icon: 'menu_book',          label: 'មុខវិជ្ជា'          },
+  { path: '/admin/teachers',       icon: 'supervisor_account', label: 'គ្រូបង្រៀន'         },
+  { path: '/admin/assignments',    icon: 'assignment_ind',     label: 'ចាត់តាំងគ្រូ'       },
+  { path: '/admin/enrollment',     icon: 'how_to_reg',         label: 'ចុះឈ្មោះសិស្ស'     },
 ]
 
 const teacherMenu = [
