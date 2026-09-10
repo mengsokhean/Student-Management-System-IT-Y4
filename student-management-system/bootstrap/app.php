@@ -20,6 +20,32 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
+
+        // Redirect unauthenticated users to the correct guard-specific login page.
+        $middleware->redirectGuestsTo(function (Request $request) {
+            if ($request->is('admin') || $request->is('admin/*')) {
+                return route('admin.login');
+            }
+
+            if ($request->is('teacher') || $request->is('teacher/*')) {
+                return route('teacher.login');
+            }
+
+            // Fallback for any other protected route.
+            return route('admin.login');
+        });
+
+        // Redirect authenticated users trying to access guest routes (like login)
+        $middleware->redirectUsersTo(function (Request $request) {
+            if ($request->is('admin') || $request->is('admin/*')) {
+                return route('admin.dashboard');
+            }
+            if ($request->is('teacher') || $request->is('teacher/*')) {
+                return route('teacher.dashboard');
+            }
+            // Fallback
+            return route('admin.dashboard');
+        });
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

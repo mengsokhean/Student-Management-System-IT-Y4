@@ -1,76 +1,61 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import ProtectedRoute from "./components/common/ProtectedRoute";
-import MainLayout from "./components/layouts/MainLayout";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AcademicYearPage from "./pages/admin/AcademicYearPage";
-import SubjectPage from "./pages/admin/SubjectPage";
-import ClassroomPage from "./pages/admin/ClassroomPage";
-import TeacherPage from "./pages/admin/TeacherPage";
-import EnrollmentPage from "./pages/admin/EnrollmentPage";
-import TeacherDashboard from "./pages/teacher/TeacherDashboard";
-import AttendancePage from "./pages/teacher/AttendancePage";
-import ScorePage from "./pages/teacher/ScorePage";
-import StudentDashboard from "./pages/student/StudentDashboard";
-import StudentAttendancePage from "./pages/student/AttendancePage";
-import ReportCardPage from "./pages/student/ReportCardPage";
-import Login from "./pages/Login";
-import AssignmentPage from "./pages/admin/AssignmentPage";
-import StudentRegistrationPage from "./pages/admin/StudentRegistrationPage";
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
+// Public Layout & Pages — THIS IS ALL REACT HANDLES
+import PublicLayout      from './components/layouts/PublicLayout'
+import HomePage          from './pages/public/HomePage'
+import AboutPage         from './pages/public/AboutPage'
+import ContactPage       from './pages/public/ContactPage'
+import ResultSearchPage  from './pages/public/ResultSearchPage'
+import ResultDisplayPage from './pages/public/ResultDisplayPage'
+import NewsPage          from './pages/public/NewsPage'
+import AnnouncementsPage from './pages/public/AnnouncementsPage'
+import ArticleDetailPage from './pages/public/ArticleDetailPage'
+
+// Admin Stub Pages
+import StudentsStubPage from './pages/admin/StudentsStubPage'
+import TeachersStubPage from './pages/admin/TeachersStubPage'
+import ClassesStubPage from './pages/admin/ClassesStubPage'
+import AttendancePage from './pages/admin/AttendancePage'
+
+/*
+ * ─────────────────────────────────────────────────────────────────────────
+ * ARCHITECTURE NOTE
+ * ─────────────────────────────────────────────────────────────────────────
+ * React ONLY handles the PUBLIC website.
+ *
+ * Admin Portal  → /admin/login, /admin/dashboard  (Laravel Blade SSR)
+ * Teacher Portal → /teacher/login, /teacher/dashboard (Laravel Blade SSR)
+ *
+ * Do NOT add Admin or Teacher routes here.
+ * ─────────────────────────────────────────────────────────────────────────
+ */
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
-        {/* Admin */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute roles={["admin"]}>
-              <MainLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="assignments" element={<AssignmentPage />} />
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="academic-years" element={<AcademicYearPage />} />
-          <Route path="subjects" element={<SubjectPage />} />
-          <Route path="classrooms" element={<ClassroomPage />} />
-          <Route path="teachers" element={<TeacherPage />} />
-          <Route path="enrollment" element={<EnrollmentPage />} />
-          <Route path="assignments" element={<AssignmentPage />} />
-          <Route path="subjects" element={<SubjectPage />} />
-          <Route path="enrollment" element={<StudentRegistrationPage />} />
+
+        {/* ══ PUBLIC WEBSITE (React SPA) ══ */}
+        <Route path="/" element={<PublicLayout />}>
+          <Route index               element={<HomePage />} />
+          <Route path="about"        element={<AboutPage />} />
+          <Route path="news"         element={<NewsPage />} />
+          <Route path="announcements" element={<AnnouncementsPage />} />
+          <Route path="contact"      element={<ContactPage />} />
+          <Route path="results"      element={<ResultSearchPage />} />
+          <Route path="results/view" element={<ResultDisplayPage />} />
+          <Route path="article/:slug" element={<ArticleDetailPage />} />
         </Route>
 
-        {/* Teacher */}
-        <Route
-          path="/teacher"
-          element={
-            <ProtectedRoute roles={["teacher"]}>
-              <MainLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="dashboard" element={<TeacherDashboard />} />
+        {/* ══ ADMIN STUBS (React SPA placeholders) ══ */}
+        <Route path="/admin">
+          <Route path="students" element={<StudentsStubPage />} />
+          <Route path="teachers" element={<TeachersStubPage />} />
+          <Route path="classes"  element={<ClassesStubPage />} />
           <Route path="attendance" element={<AttendancePage />} />
-          <Route path="scores" element={<ScorePage />} />
         </Route>
 
-        {/* Student */}
-        <Route
-          path="/student"
-          element={
-            <ProtectedRoute roles={["student"]}>
-              <MainLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route path="dashboard" element={<StudentDashboard />} />
-          <Route path="attendance" element={<StudentAttendancePage />} />
-          <Route path="report-card" element={<ReportCardPage />} />
-        </Route>
       </Routes>
     </BrowserRouter>
-  );
+  )
 }

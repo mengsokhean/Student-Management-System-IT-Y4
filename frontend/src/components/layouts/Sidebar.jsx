@@ -13,9 +13,14 @@ const adminMenu = [
 ]
 
 const teacherMenu = [
-  { path: '/teacher/dashboard',  icon: 'dashboard',  label: 'ទំព័រដើម'    },
-  { path: '/teacher/attendance', icon: 'fact_check', label: 'ចុះវត្តមាន'  },
-  { path: '/teacher/scores',     icon: 'grade',      label: 'បញ្ចូលពិន្ទុ' },
+  { path: '/teacher/dashboard',  icon: 'dashboard',        label: 'ទំព័រដើម'          },
+  { path: '/teacher/students',   icon: 'groups',           label: 'សិស្សថ្នាក់ខ្ញុំ'   },
+  { path: '/teacher/attendance', icon: 'fact_check',       label: 'វត្តមានសិស្ស'       },
+  { path: '/teacher/scores',     icon: 'grade',            label: 'ពិន្ទុសិក្សា'        },
+  { path: '/teacher/homework',   icon: 'assignment',       label: 'កិច្ចការផ្ទះ'        },
+  { path: '/teacher/schedule',   icon: 'calendar_today',   label: 'កាលវិភាគបង្រៀន'    },
+  { path: '/teacher/announcements', icon: 'campaign',      label: 'សេចក្តីជូនដំណឹង'  },
+  { path: '/teacher/reports',    icon: 'summarize',        label: 'របាយការណ៍'           },
 ]
 
 const studentMenu = [
@@ -50,15 +55,14 @@ export default function Sidebar() {
       {/* ── Brand ── */}
       <div className="px-4 py-5 border-b border-slate-700">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center
-                          justify-center flex-shrink-0">
-            <span className="material-icons text-white text-xl">school</span>
+          <div className="w-10 h-10 flex items-center justify-center bg-white rounded-xl p-1 flex-shrink-0">
+            <img src="/niei-logo.png" alt="NIEI Logo" className="w-full h-full object-contain" />
           </div>
           <div className="overflow-hidden">
             <p className="text-white font-bold text-sm leading-tight truncate">
-              វិទ្យាល័យហ៊ុនសែន
+              NIEI High School
             </p>
-            <p className="text-slate-400 text-xs truncate">ខេត្តព្រះសីហនុ</p>
+            <p className="text-slate-400 text-xs truncate">រាជធានីភ្នំពេញ</p>
           </div>
         </div>
       </div>

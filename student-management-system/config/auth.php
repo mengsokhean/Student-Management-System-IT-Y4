@@ -38,9 +38,25 @@ return [
     */
 
     'guards' => [
+        // Default Laravel web guard (kept for any future public auth needs)
         'web' => [
-            'driver' => 'session',
+            'driver'   => 'session',
             'provider' => 'users',
+        ],
+
+        // ── SYSTEM B: Admin Portal ───────────────────────────────────────────
+        // Session-based, scoped to admin users only.
+        // Session key is separate from the teacher guard — no cross-portal bleed.
+        'admin' => [
+            'driver'   => 'session',
+            'provider' => 'admin_users',
+        ],
+
+        // ── SYSTEM B: Teacher Portal ─────────────────────────────────────────
+        // Session-based, scoped to teacher users only.
+        'teacher' => [
+            'driver'   => 'session',
+            'provider' => 'teacher_users',
         ],
     ],
 
@@ -62,15 +78,25 @@ return [
     */
 
     'providers' => [
+        // Default provider (kept for compatibility)
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
+            'model'  => env('AUTH_MODEL', User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        // ── Admin provider ───────────────────────────────────────────────────
+        // Same User model/table. Role check is enforced in AdminAuthController.
+        'admin_users' => [
+            'driver' => 'eloquent',
+            'model'  => App\Models\User::class,
+        ],
+
+        // ── Teacher provider ─────────────────────────────────────────────────
+        // Same User model/table. Role check is enforced in TeacherAuthController.
+        'teacher_users' => [
+            'driver' => 'eloquent',
+            'model'  => App\Models\User::class,
+        ],
     ],
 
     /*
@@ -95,8 +121,20 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
+            'table'    => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire'   => 60,
+            'throttle' => 60,
+        ],
+        'admins' => [
+            'provider' => 'admin_users',
+            'table'    => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire'   => 60,
+            'throttle' => 60,
+        ],
+        'teachers' => [
+            'provider' => 'teacher_users',
+            'table'    => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'expire'   => 60,
             'throttle' => 60,
         ],
     ],

@@ -1,64 +1,52 @@
 <?php
 
-use App\Http\Controllers\Api\Admin\AcademicYearController;
-use App\Http\Controllers\Api\Admin\ClassroomController;
-use App\Http\Controllers\Api\Admin\EnrollmentController;
-use App\Http\Controllers\Api\Admin\GradeController;
-use App\Http\Controllers\Api\Admin\SubjectController;
-use App\Http\Controllers\Api\Admin\TeacherController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\Teacher\AttendanceController;
-use App\Http\Controllers\Api\Teacher\ScoreController;
-use App\Http\Controllers\Api\Teacher\TeacherClassroomController;
-use App\Http\Controllers\Api\Student\StudentProfileController;
-use App\Http\Controllers\Api\Student\StudentAttendanceController;
-use App\Http\Controllers\Api\Student\StudentReportCardController;
+use App\Http\Controllers\Api\PublicResultController;
+use App\Http\Controllers\Api\PublicController;
+use App\Http\Controllers\Api\AttendanceController;
 use Illuminate\Support\Facades\Route;
 
-// Public
-Route::post('/auth/login', [AuthController::class, 'login']);
+/*
+|--------------------------------------------------------------------------
+| API Routes — PUBLIC REACT WEBSITE ONLY
+|--------------------------------------------------------------------------
+| These routes serve the public-facing React SPA.
+| NO auth:sanctum here. NO admin. NO teacher. NO private data.
+|
+| Admin and Teacher portals are served exclusively by Laravel Blade (SSR)
+| via routes/web.php with standard session-based authentication.
+|--------------------------------------------------------------------------
+*/
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::prefix('public')->group(function () {
 
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
-    Route::get('/auth/me',     [AuthController::class, 'me']);
+    Route::get('/stats',    [PublicController::class, 'getStats']);
+    Route::get('/articles', [PublicController::class, 'getArticles']);
+    Route::get('/articles/{slug}', [PublicController::class, 'showArticle']);
 
-    // ─── ADMIN ───────────────────────────────────────────
-    Route::middleware('role:admin')->prefix('admin')->group(function () {
-        Route::apiResource('academic-years', AcademicYearController::class);
-        Route::get('grades',          [GradeController::class, 'index']);
-        Route::get('grades/{grade}',  [GradeController::class, 'show']);
-        Route::apiResource('subjects', SubjectController::class);
-        Route::post('subjects/{subject}/assign-grade', [SubjectController::class, 'assignToGrade']);
-        Route::post('subjects/{subject}/remove-grade', [SubjectController::class, 'removeFromGrade']);
-        Route::apiResource('classrooms', ClassroomController::class);
-        Route::apiResource('teachers', TeacherController::class);
-        Route::post('teachers/assign-homeroom', [TeacherController::class, 'assignHomeroom']);
-        Route::post('teachers/assign-subject',  [TeacherController::class, 'assignSubject']);
-        Route::post('teachers/remove-subject',  [TeacherController::class, 'removeSubject']);
-        Route::get('classrooms/{classroom}/students', [EnrollmentController::class, 'classroomStudents']);
-        Route::post('enrollment',                     [EnrollmentController::class, 'store']);
-        Route::post('enrollment/enroll',              [EnrollmentController::class, 'enroll']);
-        Route::patch('enrollment/{student}/status',   [EnrollmentController::class, 'updateStatus']);
+    // Rate-limited: 10 attempts per minute per IP
+    // POST /api/public/verify-student
+    Route::middleware(['throttle:10,1'])->group(function () {
+        Route::post('/verify-student', [PublicResultController::class, 'verify']);
     });
 
-    // ─── TEACHER ─────────────────────────────────────────
-    Route::middleware('role:teacher')->prefix('teacher')->group(function () {
-        Route::get('my-classrooms',                     [TeacherClassroomController::class, 'myClassrooms']);
-        Route::get('classrooms/{classroomId}/students', [TeacherClassroomController::class, 'classroomStudents']);
-        Route::get('attendance',                 [AttendanceController::class, 'index']);
-        Route::post('attendance/bulk',           [AttendanceController::class, 'bulkStore']);
-        Route::patch('attendance/{attendance}',  [AttendanceController::class, 'update']);
-        Route::get('attendance/student-report',  [AttendanceController::class, 'studentReport']);
-        Route::get('scores',                     [ScoreController::class, 'index']);
-        Route::post('scores/bulk',               [ScoreController::class, 'bulkStore']);
-        Route::get('scores/annual-report',       [ScoreController::class, 'studentAnnualReport']);
+    // Rate-limited: 30 requests per minute per IP
+    // GET /api/public/student-result/{studentId}
+    Route::middleware(['throttle:30,1'])->group(function () {
+        Route::get('/student-result/{studentId}', [PublicResultController::class, 'show']);
     });
+});
 
-    // ─── STUDENT ─────────────────────────────────────────
-    Route::middleware('role:student')->prefix('student')->group(function () {
-        Route::get('profile',      [StudentProfileController::class, 'show']);
-        Route::get('attendance',   [StudentAttendanceController::class, 'index']);
-        Route::get('report-card',  [StudentReportCardController::class, 'show']);
+Route::prefix('admin')->group(function () {
+    Route::get('/students',   [\App\Http\Controllers\Web\Admin\StudentController::class, 'index']);
+    Route::get('/teachers',   [\App\Http\Controllers\Web\Admin\TeacherController::class, 'index']);
+    Route::get('/classes',    [\App\Http\Controllers\Web\Admin\ClassroomController::class, 'index']);
+    Route::get('/classrooms', [\App\Http\Controllers\Web\Admin\ClassroomController::class, 'index']);
+    Route::get('/subjects',   [\App\Http\Controllers\Web\Admin\SubjectController::class, 'index']);
+
+    Route::prefix('attendance')->group(function () {
+        Route::get('/classrooms', [AttendanceController::class, 'classrooms']);
+        Route::get('/students',   [AttendanceController::class, 'students']);
+        Route::post('/bulk',      [AttendanceController::class, 'bulkStore']);
+        Route::get('/report',     [AttendanceController::class, 'report']);
     });
 });

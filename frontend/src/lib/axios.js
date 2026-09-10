@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api",
@@ -24,6 +25,11 @@ api.interceptors.response.use(
       localStorage.removeItem("user");
       window.location.href = "/login";
     }
+
+    // Show toast for any API error
+    const message = error.response?.data?.message || error.message || "An error occurred";
+    toast.error(message);
+
     return Promise.reject(error);
   },
 );
